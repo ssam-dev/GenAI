@@ -10,7 +10,6 @@ const nextConfig = {
   },
   // Enable static export for GitHub Pages
   output: 'export',
-  distDir: 'dist',
   trailingSlash: true,
   // Configure for GitHub Pages subdirectory
   basePath: process.env.NODE_ENV === 'production' ? '/GenAI' : '',
