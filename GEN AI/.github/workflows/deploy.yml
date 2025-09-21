@@ -1,0 +1,44 @@
+name: Deploy Next.js to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: './GEN AI/client/package-lock.json'
+        
+    - name: Install dependencies
+      working-directory: './GEN AI/client'
+      run: npm ci
+      
+    - name: Build Next.js app
+      working-directory: './GEN AI/client'
+      run: npm run build
+      env:
+        NODE_ENV: production
+        
+    - name: Add .nojekyll file
+      working-directory: './GEN AI/client'
+      run: touch dist/.nojekyll
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./GEN AI/client/dist
+        force_orphan: true
